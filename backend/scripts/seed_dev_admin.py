@@ -5,6 +5,10 @@ Default credentials:
   Email:    admin@admin.com
   Password: admin@12
 
+You can override with env vars before running:
+  ADMIN_EMAIL=you@example.com
+  ADMIN_PASSWORD=strong_password
+
 Requires backend/.env with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
 Safe to run multiple times: updates password + role if the user already exists.
 
@@ -20,8 +24,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from supabase import create_client
 
-EMAIL = "admin@admin.com"
-PASSWORD = "admin@12"
+EMAIL = os.getenv("ADMIN_EMAIL", "admin@admin.com").strip()
+PASSWORD = os.getenv("ADMIN_PASSWORD", "admin@12").strip()
 
 _backend_root = Path(__file__).resolve().parent.parent
 load_dotenv(_backend_root / ".env", override=True)
@@ -47,6 +51,9 @@ def main() -> None:
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
     if not url or not key:
         print("Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in backend/.env", file=sys.stderr)
+        sys.exit(1)
+    if not EMAIL or not PASSWORD:
+        print("ADMIN_EMAIL and ADMIN_PASSWORD must be non-empty.", file=sys.stderr)
         sys.exit(1)
 
     sb = create_client(url, key)

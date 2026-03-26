@@ -35,6 +35,18 @@ function jsonAuthHeaders(token?: string): Record<string, string> {
   return h;
 }
 
+/**
+ * Lightweight keep-alive ping used by the frontend to warm free-tier backends.
+ */
+export async function pingHealth(): Promise<boolean> {
+  try {
+    const res = await fetch(`${base}/health`, { method: "GET" });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 /** -------- Public -------- */
 export function getProducts(params: {
   page?: number;
