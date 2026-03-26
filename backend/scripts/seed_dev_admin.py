@@ -81,8 +81,13 @@ def main() -> None:
         )
         print(f"Auth user {EMAIL} already existed; password updated and email confirmed.")
 
-    sb.table("users").update({"role": "admin"}).eq("email", EMAIL).execute()
-    print(f"public.users.role set to admin for {EMAIL}")
+    row = sb.table("users").select("id").eq("email", EMAIL).execute()
+    existing = (row.data or [None])[0]
+    if existing:
+        sb.table("users").update({"role": "admin"}).eq("email", EMAIL).execute()
+    else:
+        sb.table("users").insert({"id": uid, "email": EMAIL, "role": "admin"}).execute()
+    print(f"public.users admin profile ensured for {EMAIL}")
     print("You can sign in on the frontend with the email and password above.")
 
 
