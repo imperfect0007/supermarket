@@ -1,0 +1,1 @@
+# Supermarket FastAPI application package
