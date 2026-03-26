@@ -10,6 +10,9 @@ export function Login() {
   const [pending, setPending] = useState(false);
   const loc = useLocation();
   const from = (loc.state as { from?: string } | null)?.from ?? "/";
+  const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL ?? "").trim();
+  const supabaseRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/i)?.[1] ?? "not-set";
+  const apiUrl = (import.meta.env.VITE_API_URL ?? "").trim() || "not-set";
 
   if (booting) {
     return (
@@ -43,6 +46,10 @@ export function Login() {
         <div>
           <h1 className="font-display text-3xl font-semibold text-market-ink dark:text-white">Log in</h1>
           <p className="mt-2 text-sm text-market-muted dark:text-stone-400">Email and password from your Supabase account.</p>
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            Env check: Supabase ref <code className="font-mono">{supabaseRef}</code> | API{" "}
+            <code className="font-mono">{apiUrl}</code>
+          </p>
           {import.meta.env.DEV ? (
             <p className="mt-3 rounded-lg border border-market-terra/20 bg-market-cream/50 px-3 py-2 text-xs leading-relaxed text-market-ink/90 dark:border-brand-500/25 dark:bg-stone-900/40 dark:text-stone-300">
               <strong className="font-semibold">Local dev:</strong> after{" "}

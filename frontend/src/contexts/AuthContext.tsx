@@ -36,8 +36,10 @@ function formatAuthError(error: AuthError): Error {
     );
   }
   if (error.code === "invalid_credentials") {
+    const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL ?? "").trim();
+    const ref = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/i)?.[1] ?? "unknown";
     return new Error(
-      `${base} Use the exact email/password for this Supabase project. For the dev admin, run \`python scripts/seed_dev_admin.py\` from the \`backend\` folder, then use admin@admin.com / admin@12. Ensure frontend/.env VITE_SUPABASE_URL matches backend/.env SUPABASE_URL.`
+      `${base} Use the exact email/password for this Supabase project. Current frontend Supabase ref: ${ref}. If this is wrong on production, update Vercel env vars (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY), redeploy, and clear browser site data.`
     );
   }
   return new Error(base);
